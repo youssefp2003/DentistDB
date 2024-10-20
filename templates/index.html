@@ -6,30 +6,66 @@
     <title>Dentist Patient Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold text-blue-600 mb-8">Dentist Patient Management</h1>
-        <div class="mb-6">
-            <a href="{{ url_for('add_patient') }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Add New Patient</a>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-semibold text-primary">
+                    Dentist Patient Management
+                </div>
+                <div>
+                    <a href="{{ url_for('index') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Home</a>
+                    <a href="{{ url_for('add_patient') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Add Patient</a>
+                </div>
+            </div>
         </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8">Patient Directory</h1>
         
         <div class="mb-8">
-            <input type="text" id="search-input" placeholder="Search patients..." class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" id="search-input" placeholder="Search patients..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm transition-all">
         </div>
         
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Patient List</h2>
-        <div id="patient-list" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div id="patient-list" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {% for patient in patients %}
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-all">
                 <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ patient.nom }} {{ patient.prenom }}</h3>
                 <p class="text-gray-600 mb-1">Téléphone: {{ patient.telephone }}</p>
-                <p class="text-gray-600 mb-1">Carte Nationale: {{ patient.numero_carte_national }}</p>
-                <a href="{{ url_for('patient_detail', patient_id=patient.id) }}" class="text-blue-500 hover:text-blue-600">View Details</a>
+                <p class="text-gray-600 mb-3">Carte Nationale: {{ patient.numero_carte_national }}</p>
+                <a href="{{ url_for('patient_detail', patient_id=patient.id) }}" class="text-primary hover:text-accent transition-all">View Details</a>
             </div>
             {% endfor %}
         </div>
     </div>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-6 py-4">
+            <p>&copy; 2024 Dentist Patient Management. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script>
         const searchInput = document.getElementById('search-input');
