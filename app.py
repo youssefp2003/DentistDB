@@ -52,13 +52,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == 'mouna' and password == '123':
-            user = User.query.filter_by(username='mouna').first()
-            if not user:
-                user = User(username='mouna')
-                user.set_password('123')
-                db.session.add(user)
-                db.session.commit()
+        user = User.query.filter_by(username='mouna').first()
+        if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('index'))
         else:
@@ -203,7 +198,7 @@ with app.app_context():
     # Create a default user
     if not User.query.filter_by(username='admin').first():
         user = User(username='admin')
-        user.set_password('password')
+        user.set_password('123')
         db.session.add(user)
         db.session.commit()
     # Create the 'mouna' user if it doesn't exist
@@ -213,4 +208,15 @@ with app.app_context():
         db.session.add(user)
         db.session.commit()
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+        # Create or update the 'mouna' user with the new password
+        user = User.query.filter_by(username='mouna').first()
+        if user:
+            user.set_password('123')
+        else:
+            user = User(username='mouna')
+            user.set_password('123')
+            db.session.add(user)
+        db.session.commit()
     app.run(debug=True)

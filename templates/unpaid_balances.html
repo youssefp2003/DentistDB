@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unpaid Balances</title>
+    <title>Soldes Impayés</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script>
@@ -28,19 +28,20 @@
         <div class="container mx-auto px-6 py-3">
             <div class="flex justify-between items-center">
                 <div class="text-2xl font-semibold text-primary">
-                    Dentist Patient Management
+                    Gestion des Patients Dentaires
                 </div>
                 <div>
-                    <a href="{{ url_for('index') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Home</a>
-                    <a href="{{ url_for('add_patient') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Add Patient</a>
-                    <a href="{{ url_for('unpaid_balances') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Unpaid Balances</a>
+                    <a href="{{ url_for('index') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Accueil</a>
+                    <a href="{{ url_for('add_patient') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Ajouter un Patient</a>
+                    <a href="{{ url_for('unpaid_balances') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Soldes Impayés</a>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-all ml-3">Déconnexion</a>
                 </div>
             </div>
         </div>
     </nav>
 
     <div class="container mx-auto px-6 py-8">
-        <h1 class="text-4xl font-bold text-gray-800 mb-8">Unpaid Balances</h1>
+        <h1 class="text-4xl font-bold text-gray-800 mb-8">Soldes Impayés</h1>
         
         <div class="overflow-x-auto bg-white shadow-md rounded-lg">
             <table class="w-full table-auto">
@@ -48,7 +49,7 @@
                     <tr>
                         <th class="py-3 px-6 text-left">Patient</th>
                         <th class="py-3 px-6 text-left">Contact</th>
-                        <th class="py-3 px-6 text-right">Total Unpaid</th>
+                        <th class="py-3 px-6 text-right">Total Impayé</th>
                         <th class="py-3 px-6 text-center">Actions</th>
                     </tr>
                 </thead>
@@ -65,7 +66,7 @@
                             {{ "%.2f"|format(item.total_unpaid) }} DH
                         </td>
                         <td class="py-3 px-6 text-center">
-                            <a href="{{ url_for('patient_detail', patient_id=item.patient.id) }}" class="text-primary hover:text-accent transition-all">View Details</a>
+                            <a href="{{ url_for('patient_detail', patient_id=item.patient.id) }}" class="text-primary hover:text-accent transition-all">Voir les Détails</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -76,7 +77,7 @@
 
     <footer class="bg-gray-800 text-white mt-12">
         <div class="container mx-auto px-6 py-4">
-            <p>&copy; 2024 Dentist Patient Management. All rights reserved.</p>
+            <p>&copy; 2024 Gestion des Patients Dentaires. Tous droits réservés.</p>
         </div>
     </footer>
 </body>
