@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-blue-600 mb-8">Patient Details</h1>
+        <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ patient.nom }} {{ patient.prenom }}</h2>
+            <p class="text-gray-600 mb-2">Téléphone: {{ patient.telephone }}</p>
+            <p class="text-gray-600 mb-2">Carte Nationale: {{ patient.numero_carte_national }}</p>
+            <p class="text-gray-600 mb-2">Assurance: {{ patient.assurance or 'N/A' }}</p>
+            <p class="text-gray-600 mb-2">Profession: {{ patient.profession or 'N/A' }}</p>
+            <p class="text-gray-600 mb-2">Maladie: {{ patient.maladie or 'N/A' }}</p>
+            <p class="text-gray-600 mb-2">Observation: {{ patient.observation or 'N/A' }}</p>
+        </div>
+        
+        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Visits</h3>
+        <a href="{{ url_for('add_visit', patient_id=patient.id) }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mb-4 inline-block">Add New Visit</a>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full bg-white shadow-md rounded-lg">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">Date</th>
+                        <th class="py-3 px-6 text-left">Acte</th>
+                        <th class="py-3 px-6 text-right">Prix</th>
+                        <th class="py-3 px-6 text-right">Payé</th>
+                        <th class="py-3 px-6 text-right">Reste</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                    {% for visit in patient.visits %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ visit.date }}</td>
+                        <td class="py-3 px-6 text-left">{{ visit.acte }}</td>
+                        <td class="py-3 px-6 text-right">{{ visit.prix }}</td>
+                        <td class="py-3 px-6 text-right">{{ visit.paye }}</td>
+                        <td class="py-3 px-6 text-right">{{ visit.reste }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <a href="{{ url_for('index') }}" class="text-blue-500 hover:text-blue-600 mt-4 inline-block">Back to Patient List</a>
+    </div>
+</body>
+</html>
