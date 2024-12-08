@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Nouveau Patient</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-semibold text-primary">
+                    Gestion des Patients Dentaires
+                </div>
+                <div>
+                    <a href="{{ url_for('index') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Accueil</a>
+                    <a href="{{ url_for('add_patient') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Ajouter un Patient</a>
+                    <a href="{{ url_for('unpaid_balances') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Soldes Impayés</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8">Ajouter un Nouveau Patient</h1>
+        <form action="{{ url_for('add_patient') }}" method="post" class="bg-white shadow-lg rounded-lg p-8 max-w-2xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="nom" class="block text-gray-700 font-semibold mb-2">Nom:</label>
+                    <input type="text" id="nom" name="nom" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="prenom" class="block text-gray-700 font-semibold mb-2">Prénom:</label>
+                    <input type="text" id="prenom" name="prenom" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="telephone" class="block text-gray-700 font-semibold mb-2">Téléphone:</label>
+                    <input type="tel" id="telephone" name="telephone" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="numero_carte_national" class="block text-gray-700 font-semibold mb-2">Numéro Carte Nationale:</label>
+                    <input type="text" id="numero_carte_national" name="numero_carte_national" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="assurance" class="block text-gray-700 font-semibold mb-2">Assurance:</label>
+                    <input type="text" id="assurance" name="assurance" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="profession" class="block text-gray-700 font-semibold mb-2">Profession:</label>
+                    <input type="text" id="profession" name="profession" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <label for="maladie" class="block text-gray-700 font-semibold mb-2">Maladie:</label>
+                <input type="text" id="maladie" name="maladie" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+            
+            <div class="mt-6">
+                <label for="observation" class="block text-gray-700 font-semibold mb-2">Observation:</label>
+                <textarea id="observation" name="observation" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" rows="4"></textarea>
+            </div>
+            
+            <div class="mt-8 flex items-center justify-between">
+                <button type="submit" class="bg-primary hover:bg-accent text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:shadow-outline transition-all">Ajouter le Patient</button>
+                <a href="{{ url_for('index') }}" class="text-primary hover:text-accent transition-all">Retour à la Liste des Patients</a>
+            </div>
+        </form>
+    </div>
+
+   
+</body>
+</html>

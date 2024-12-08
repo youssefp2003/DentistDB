@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Patients Dentaires</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-semibold text-primary">
+                    Gestion des Patients Dentaires
+                </div>
+                <div>
+                    <a href="{{ url_for('index') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Accueil</a>
+                    <a href="{{ url_for('add_patient') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Ajouter un Patient</a>
+                    <a href="{{ url_for('unpaid_balances') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Soldes Impayés</a>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-all ml-3">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8">Répertoire des Patients</h1>
+        
+        <div class="mb-8">
+            <input type="text" id="search-input" placeholder="Rechercher des patients..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm transition-all">
+        </div>
+        
+        <div id="patient-list" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {% for patient in patients %}
+            <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-all">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ patient.nom }} {{ patient.prenom }}</h3>
+                <p class="text-gray-600 mb-1">Téléphone: {{ patient.telephone }}</p>
+                <p class="text-gray-600 mb-3">Carte Nationale: {{ patient.numero_carte_national }}</p>
+                <a href="{{ url_for('patient_detail', patient_id=patient.id) }}" class="text-primary hover:text-accent transition-all">Voir les Détails</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    
+  
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const patientList = document.getElementById('patient-list');
+
+        searchInput.addEventListener('input', debounce(liveSearch, 300));
+
+        function debounce(func, delay) {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        function liveSearch() {
+            const query = searchInput.value;
+            axios.get(`/live_search?query=${query}`)
+                .then(response => {
+                    const patients = response.data;
+                    updatePatientList(patients);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function updatePatientList(patients) {
+            patientList.innerHTML = patients.map(patient => `
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">${patient.nom} ${patient.prenom}</h3>
+                    <p class="text-gray-600 mb-1">Téléphone: ${patient.telephone}</p>
+                    <p class="text-gray-600 mb-1">Carte Nationale: ${patient.numero_carte_national}</p>
+                    <a href="/patient/${patient.id}" class="text-blue-500 hover:text-blue-600">View Details</a>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

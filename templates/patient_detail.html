@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Patient</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+    </style>
+    <script>
+        function autoSubmitForm(input) {
+            if (input.files && input.files[0]) {
+                input.form.submit();
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-semibold text-primary">
+                    Gestion des Patients Dentaires
+                </div>
+                <div>
+                    <a href="{{ url_for('index') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Accueil</a>
+                    <a href="{{ url_for('add_patient') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Ajouter un Patient</a>
+                    <a href="{{ url_for('unpaid_balances') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Soldes Impayés</a>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-all ml-3">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8">Détails du Patient</h1>
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Patient Information Card -->
+            <div class="bg-white shadow-lg rounded-lg p-6 md:w-1/2">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ patient.nom }} {{ patient.prenom }}</h2>
+                <p class="text-gray-600 mb-2">Téléphone: {{ patient.telephone }}</p>
+                <p class="text-gray-600 mb-2">Carte Nationale: {{ patient.numero_carte_national }}</p>
+                <p class="text-gray-600 mb-2">Assurance: {{ patient.assurance or 'N/A' }}</p>
+                <p class="text-gray-600 mb-2">Profession: {{ patient.profession or 'N/A' }}</p>
+                <p class="text-gray-600 mb-2">Maladie: {{ patient.maladie or 'N/A' }}</p>
+                <p class="text-gray-600 mb-2">Observation: {{ patient.observation or 'N/A' }}</p>
+                
+                <div class="mt-6 flex space-x-4">
+                    <a href="{{ url_for('edit_patient', patient_id=patient.id) }}" class="bg-primary hover:bg-accent text-white font-bold py-2 px-4 rounded transition-all">Modifier</a>
+                    <a href="{{ url_for('tooth_diagram', patient_id=patient.id) }}" class="bg-secondary hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-all">Schéma Dentaire</a>
+                    <form action="{{ url_for('delete_patient', patient_id=patient.id) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce patient ?');" class="inline">
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded transition-all text-sm">×</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Visits Table -->
+            <div class="md:w-1/2">
+                <div class="bg-white shadow-lg rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-semibold text-gray-800">Visites</h3>
+                        <a href="{{ url_for('add_visit', patient_id=patient.id) }}" class="bg-secondary hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-all">Nouvelle Visite</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 text-sm leading-normal">
+                                    <th class="py-3 px-4 text-left">Date</th>
+                                    <th class="py-3 px-4 text-left">Acte</th>
+                                    <th class="py-3 px-4 text-right">Prix</th>
+                                    <th class="py-3 px-4 text-right">Payé</th>
+                                    <th class="py-3 px-4 text-right">Reste</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm">
+                                {% for visit in patient.visits %}
+                                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                    <td class="py-3 px-4">{{ visit.date.strftime('%d/%m/%Y') }}</td>
+                                    <td class="py-3 px-4">{{ visit.acte }}</td>
+                                    <td class="py-3 px-4 text-right">{{ "%.2f"|format(visit.prix) }} DH</td>
+                                    <td class="py-3 px-4 text-right">{{ "%.2f"|format(visit.paye) }} DH</td>
+                                    <td class="py-3 px-4 text-right">{{ "%.2f"|format(visit.reste) }} DH</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- X-ray Photo Section -->
+                <div class="bg-white shadow-lg rounded-lg p-6 mt-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-semibold text-gray-800">Radiographie</h3>
+                    </div>
+                    {% if patient.xray_photo %}
+                        <div class="mb-4">
+                            <img src="{{ url_for('static', filename='uploads/xrays/' + patient.xray_photo) }}" 
+                                 alt="Radiographie" 
+                                 class="max-w-full h-auto rounded-lg shadow-md">
+                            <div class="mt-4 flex justify-end">
+                                <form action="{{ url_for('delete_xray', patient_id=patient.id) }}" 
+                                      method="post" 
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette radiographie ?');"
+                                      class="inline">
+                                    <button type="submit" 
+                                            class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-all">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-gray-600 mb-4">Aucune radiographie disponible</p>
+                    {% endif %}
+                    
+                    <form action="{{ url_for('upload_xray', patient_id=patient.id) }}" 
+                          method="post" 
+                          enctype="multipart/form-data"
+                          class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <input type="file" 
+                                   name="xray" 
+                                   accept=".jpg,.jpeg,.png" 
+                                   onchange="autoSubmitForm(this)"
+                                   class="block w-full text-sm text-gray-500
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-full file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-primary file:text-white
+                                          hover:file:bg-accent">
+                            <button type="submit" 
+                                    class="bg-primary hover:bg-accent text-white font-bold py-2 px-4 rounded transition-all">
+                                {% if patient.xray_photo %}Mettre à jour{% else %}Ajouter{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-6 py-4">
+            <p>&copy; 2024 Gestion des Patients Dentaires. Tous droits réservés.</p>
+        </div>
+    </footer>
+</body>
+</html>

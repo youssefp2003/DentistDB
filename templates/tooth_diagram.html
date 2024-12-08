@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schéma Dentaire - {{ patient.nom }} {{ patient.prenom }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+        .tooth { cursor: pointer; transition: fill 0.3s ease; }
+        .tooth:hover { opacity: 0.8; }
+        .tooth.carie { fill: #EF4444; }
+        .tooth.couronne { fill: #3B82F6; }
+        .tooth.bridge { fill: #8B5CF6; }
+        .tooth.implant { fill: #10B981; }
+        .diagram-container { overflow-x: auto; padding: 20px; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-semibold text-primary">
+                    Gestion des Patients Dentaires
+                </div>
+                <div>
+                    <a href="{{ url_for('index') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Accueil</a>
+                    <a href="{{ url_for('patient_detail', patient_id=patient.id) }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Retour au Patient</a>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-all ml-3">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <div class="flex items-center mb-8">
+            <a href="{{ url_for('patient_detail', patient_id=patient.id) }}" class="inline-flex items-center text-gray-600 hover:text-primary mr-4">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Retour
+            </a>
+            <h1 class="text-4xl font-bold text-gray-800">Schéma Dentaire - {{ patient.nom }} {{ patient.prenom }}</h1>
+        </div>
+        
+        <div class="bg-white shadow-lg rounded-lg p-8">
+            <!-- Tooth Status Selection -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold mb-4">Sélectionner l'état de la dent:</h3>
+                <div class="flex flex-wrap gap-4">
+                    <button class="status-btn px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all" data-status="carie">Carie</button>
+                    <button class="status-btn px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all" data-status="couronne">Couronne</button>
+                    <button class="status-btn px-4 py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition-all" data-status="bridge">Bridge</button>
+                    <button class="status-btn px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-all" data-status="implant">Implant</button>
+                    <button class="status-btn px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-all" data-status="normal">Normal</button>
+                </div>
+            </div>
+
+            <!-- Dental Diagram -->
+            <div class="diagram-container">
+                <svg viewBox="0 0 1200 400" class="w-full" style="min-width: 1000px;">
+                    <!-- Upper Teeth -->
+                    <g transform="translate(100, 50)">
+                        {% for i in range(1, 17) %}
+                        <g transform="translate({{ 60 * i - 30 }}, 0)">
+                            <rect x="0" y="0" width="40" height="40" rx="5" class="tooth" id="tooth-{{ i }}" fill="#f3f4f6" stroke="#9ca3af" />
+                            <text x="20" y="60" text-anchor="middle" class="text-sm">{{ i }}</text>
+                        </g>
+                        {% endfor %}
+                    </g>
+
+                    <!-- Lower Teeth -->
+                    <g transform="translate(100, 200)">
+                        {% for i in range(17, 33) %}
+                        <g transform="translate({{ 60 * (33-i) - 30 }}, 0)">
+                            <rect x="0" y="0" width="40" height="40" rx="5" class="tooth" id="tooth-{{ i }}" fill="#f3f4f6" stroke="#9ca3af" />
+                            <text x="20" y="60" text-anchor="middle" class="text-sm">{{ i }}</text>
+                        </g>
+                        {% endfor %}
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedStatus = 'normal';
+        let selectedButton = null;
+        
+        // Handle status button clicks
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove highlight from previous button
+                if (selectedButton) {
+                    selectedButton.classList.remove('ring-2', 'ring-offset-2');
+                }
+                
+                selectedStatus = btn.dataset.status;
+                selectedButton = btn;
+                btn.classList.add('ring-2', 'ring-offset-2');
+            });
+        });
+
+        // Handle tooth clicks
+        document.querySelectorAll('.tooth').forEach(tooth => {
+            tooth.addEventListener('click', () => {
+                // Remove all status classes
+                tooth.classList.remove('carie', 'couronne', 'bridge', 'implant');
+                
+                // Reset fill color if normal
+                if (selectedStatus === 'normal') {
+                    tooth.setAttribute('fill', '#f3f4f6');
+                } else {
+                    tooth.classList.add(selectedStatus);
+                }
+                
+                // Here you would typically send an AJAX request to save the status
+                const toothId = tooth.id;
+                const status = selectedStatus;
+                console.log(`Tooth ${toothId} status changed to ${status}`);
+            });
+        });
+    </script>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-6 py-4">
+            <p>&copy; 2024 Gestion des Patients Dentaires. Tous droits réservés.</p>
+        </div>
+    </footer>
+</body>
+</html>

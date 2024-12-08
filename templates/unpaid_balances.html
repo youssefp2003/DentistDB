@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soldes Impayés</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-semibold text-primary">
+                    Gestion des Patients Dentaires
+                </div>
+                <div>
+                    <a href="{{ url_for('index') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Accueil</a>
+                    <a href="{{ url_for('add_patient') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Ajouter un Patient</a>
+                    <a href="{{ url_for('unpaid_balances') }}" class="text-gray-800 hover:text-primary mx-3 transition-all">Soldes Impayés</a>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-all ml-3">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8">Soldes Impayés</h1>
+        
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+            <table class="w-full table-auto">
+                <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                    <tr>
+                        <th class="py-3 px-6 text-left">Patient</th>
+                        <th class="py-3 px-6 text-left">Contact</th>
+                        <th class="py-3 px-6 text-right">Total Impayé</th>
+                        <th class="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                    {% for item in patient_balances %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">
+                            <div class="font-medium">{{ item.patient.nom }} {{ item.patient.prenom }}</div>
+                        </td>
+                        <td class="py-3 px-6 text-left">
+                            {{ item.patient.telephone }}
+                        </td>
+                        <td class="py-3 px-6 text-right">
+                            {{ "%.2f"|format(item.total_unpaid) }} DH
+                        </td>
+                        <td class="py-3 px-6 text-center">
+                            <a href="{{ url_for('patient_detail', patient_id=item.patient.id) }}" class="text-primary hover:text-accent transition-all">Voir les Détails</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    
+</body>
+</html>
